@@ -153,6 +153,7 @@ function love.keypressed(key)
         f:renderTo(function()
             -- draw current frame on the new canvas
             love.graphics.origin()
+            love.graphics.setColor(1, 1, 1)
             love.graphics.draw(anim.frames[editor.frame])
         end)
         editor.frame = editor.frame + 1
