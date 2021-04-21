@@ -7,12 +7,12 @@ function love.load()
         love.graphics.setDefaultFilter("nearest", "nearest")
     end
     love.graphics.setBackgroundColor(settings.bg)
+    love.graphics.setFont(love.graphics.newFont("res/font.ttf", 14))
 
     -- animation file info, will be saved in project file
     anim = {
         frames = { newframe() },
         fps = 10,
-        onion = false,
     }
 
     -- editor state, could also be saved in project file
@@ -21,6 +21,7 @@ function love.load()
         frame = 1,
         playing = false,
         drawing = false,
+        onion = false,
         drawcolor = { 0, 0, 0 },
         drawsize = 5
     }
@@ -57,11 +58,11 @@ function love.draw()
 
     -- draw interface
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print("frame: "..editor.frame.." / frames: "..#anim.frames, -256, -270)
+    love.graphics.print("frame: "..editor.frame.." / frames: "..#anim.frames.." / onion: "..tostring(editor.onion), -250, -275)
     if editor.playing then
-        love.graphics.print("PLAY", 128, -272)
+        love.graphics.print("PLAY", 210, -275)
     else
-        love.graphics.print("PAWS", 128, -272)
+        love.graphics.print("PAWS", 210, -275)
     end
 
     -- draw canvas background
@@ -69,20 +70,20 @@ function love.draw()
     love.graphics.rectangle("fill", -128 * settings.scale, -128 * settings.scale, 256 * settings.scale, 256 * settings.scale)
 
     -- draw previous frame, if onion skinning is enabled
-    if anim.onion and editor.frame > 1 then
-        love.graphics.setColor(0.9, 0.9, 1, 0.5)
+    if editor.onion and editor.frame > 1 then
+        love.graphics.setColor(1, 1, 1, 0.4)
         love.graphics.draw(anim.frames[editor.frame - 1], -128 * settings.scale, -128 * settings.scale, 0, 2, 2)
-    end
-
-    -- draw next frame, if onion skinning is enabled
-    if anim.onion and editor.frame < #anim.frames then
-        love.graphics.setColor(1, 0.9, 0.9, 0.5)
-        love.graphics.draw(anim.frames[editor.frame + 1], -128 * settings.scale, -128 * settings.scale, 0, 2, 2)
     end
 
     -- draw current frame
     love.graphics.setColor(1, 1, 1)
     love.graphics.draw(anim.frames[editor.frame], -128 * settings.scale, -128 * settings.scale, 0, 2, 2)
+
+    -- draw next frame, if onion skinning is enabled
+    if editor.onion and editor.frame < #anim.frames then
+        love.graphics.setColor(1, 1, 1, 0.4)
+        love.graphics.draw(anim.frames[editor.frame + 1], -128 * settings.scale, -128 * settings.scale, 0, 2, 2)
+    end
 end
 
 function love.resize(w, h)
@@ -110,6 +111,7 @@ function love.keypressed(key)
     end
 
     if key == "space" then
+        editor.onion = false
         editor.playing = not editor.playing
         if not editor.playing then editor.tick = 0 end
     end
@@ -119,12 +121,22 @@ function love.keypressed(key)
         if not anim.frames[editor.frame] then
             anim.frames[editor.frame] = newframe()
         end
-    elseif key == "left" and editor.frame > 1 then
-        editor.frame = editor.frame - 1
+    elseif key == "left" then
+        if editor.frame > 1 then
+            editor.frame = editor.frame - 1
+        else
+            table.insert(anim.frames, 1, newframe())
+        end
     end
 
     if key == "o" then
-        anim.onion = not anim.onion
+        editor.onion = not editor.onion
+    end
+
+    if key == "s" then
+        for i, frame in ipairs(anim.frames) do
+            frame:newImageData():encode("png", string.format("%i.png", i))
+        end
     end
 end
 
