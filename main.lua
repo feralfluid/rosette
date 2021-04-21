@@ -22,8 +22,11 @@ function love.load()
         playing = false,
         drawing = false,
         onion = false,
-        drawcolor = { 0, 0, 0 },
-        drawsize = 5
+        tool = "draw",
+        drawcolor = { 0, 0, 0, 1 },
+        red = false,
+        drawsize = 4,
+        brushsize = "medium"
     }
 
     -- apply editor state as needed
@@ -48,22 +51,27 @@ function love.draw()
         -- draw to current frame canvas
         love.graphics.setCanvas(anim.frames[editor.frame])
         love.graphics.setColor(editor.drawcolor)
+        if editor.tool == "erase" then
+            love.graphics.setBlendMode("replace")
+        end
 
         -- i still need to figure out why this works
         local mx, my = love.graphics.inverseTransformPoint(love.mouse.getX(), love.mouse.getY())
-        love.graphics.circle("fill", mx / settings.scale - (love.graphics.getWidth() / 2) + 128, my / settings.scale - (love.graphics.getHeight() / 2) + 128, 4)
+        love.graphics.circle("fill", mx / settings.scale - (love.graphics.getWidth() / 2) + 128, my / settings.scale - (love.graphics.getHeight() / 2) + 128, editor.drawsize)
 
+        love.graphics.setBlendMode("alpha")
         love.graphics.setCanvas()
     end
 
     -- draw interface
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print("frame: "..editor.frame.." / frames: "..#anim.frames.." / onion: "..tostring(editor.onion), -250, -275)
+    love.graphics.print("frame: "..editor.frame.."/"..#anim.frames.." / fps: "..anim.fps.." / onion: "..tostring(editor.onion), -250, -275)
     if editor.playing then
         love.graphics.print("PLAY", 210, -275)
     else
         love.graphics.print("PAWS", 210, -275)
     end
+    love.graphics.print("tool: "..editor.tool.." / brush size: "..editor.brushsize, -250, 258)
 
     -- draw canvas background
     love.graphics.setColor(1, 1, 1)
@@ -95,10 +103,12 @@ function love.keypressed(key)
         love.event.quit() -- YEET
     end
 
+    -- clear current frame
     if key == "return" then
         anim.frames[editor.frame] = newframe()
     end
 
+    -- delete current frame
     if key == "backspace" then
         if #anim.frames == 1 then
             anim.frames[editor.frame] = newframe()
@@ -110,12 +120,14 @@ function love.keypressed(key)
         end
     end
 
+    -- play/paws
     if key == "space" then
         editor.onion = false
         editor.playing = not editor.playing
         if not editor.playing then editor.tick = 0 end
     end
 
+    -- navigate and create frames
     if key == "right" then
         editor.frame = editor.frame + 1
         if not anim.frames[editor.frame] then
@@ -129,10 +141,48 @@ function love.keypressed(key)
         end
     end
 
+    -- insert frame
+    if key == "i" then
+        editor.frame = editor.frame + 1
+        table.insert(anim.frames, editor.frame, newframe())
+    end
+
+    -- duplicate current frame
+    if key == "d" then
+        local f = newframe()
+        f:renderTo(function()
+            -- draw current frame on the new canvas
+            love.graphics.origin()
+            love.graphics.draw(anim.frames[editor.frame])
+        end)
+        editor.frame = editor.frame + 1
+        table.insert(anim.frames, editor.frame, f)
+    end
+
+    -- adjust frame rate
+    if key == "up" and anim.fps < 30 then
+        anim.fps = anim.fps + 1
+    elseif key == "down" and anim.fps > 1 then
+        anim.fps = anim.fps - 1
+    end
+
+    -- toggle eraser tool
+    if key == "e" then
+        if editor.tool == "draw" then
+            editor.drawcolor = { 0, 0, 0, 0 }
+            editor.tool = "erase"
+        else
+            editor.drawcolor = { 0, 0, 0, 1 }
+            editor.tool = "draw"
+        end
+    end
+
+    -- toggle onion skinnins
     if key == "o" then
         editor.onion = not editor.onion
     end
 
+    -- export all frames
     if key == "s" then
         for i, frame in ipairs(anim.frames) do
             frame:newImageData():encode("png", string.format("%i.png", i))
@@ -140,11 +190,27 @@ function love.keypressed(key)
     end
 end
 
+function love.wheelmoved(x, y)
+    if y > 0 then
+        if editor.brushsize == "small" then
+            editor.brushsize = "medium"
+            editor.drawsize = 4
+        elseif editor.brushsize == "medium" then
+            editor.brushsize = "large"
+            editor.drawsize = 7
+        end
+    elseif y < 0 then
+        if editor.brushsize == "large" then
+            editor.brushsize = "medium"
+            editor.drawsize = 4
+        elseif editor.brushsize == "medium" then
+            editor.brushsize = "small"
+            editor.drawsize = 2
+        end
+    end
+end
+
 function newframe()
     local canvas = love.graphics.newCanvas(256, 256)
-    love.graphics.setCanvas(canvas)
-    love.graphics.translate(128, 128)
-    love.graphics.clear(1, 1, 1, 0)
-    love.graphics.setCanvas()
     return canvas
 end
