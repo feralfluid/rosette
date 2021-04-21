@@ -189,7 +189,7 @@ function love.keypressed(key)
     -- export all frames
     if key == "s" then
         for i, frame in ipairs(anim.frames) do
-            frame:newImageData():encode("png", string.format("%i.png", i))
+            frame:newImageData():encode("png", string.format("%s%i.png", leadingzero(#anim.frames, i), i))
         end
     end
 end
@@ -218,4 +218,17 @@ end
 function newframe()
     local canvas = love.graphics.newCanvas(256, 256)
     return canvas
+end
+
+-- adds a number of leading zeroes based on the length of the longest frame index
+function leadingzero(len, f)
+    local s = ""
+    -- for each digit in the length
+    for i = 1, math.log(len, 10) do
+        -- if this digit is longer than current index
+        if math.log(f, 10) < i then
+            s = s.."0"
+        end
+    end
+    return s
 end

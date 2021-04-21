@@ -1,9 +1,9 @@
 # rosette
+![animation](res/duck.jpg)
 
 a simple flip book animation app
 
 # bindings
-
 **space:** paws/play
 
 **left:** previous frame, creates a new frame and pushes the rest back if you're already on frame 1
