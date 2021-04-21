@@ -99,7 +99,7 @@ function love.resize(w, h)
 end
 
 function love.keypressed(key)
-    if key == "escape" then
+    if key == "q" then
         love.event.quit() -- YEET
     end
 
@@ -122,9 +122,12 @@ function love.keypressed(key)
 
     -- play/paws
     if key == "space" then
-        editor.onion = false
         editor.playing = not editor.playing
-        if not editor.playing then editor.tick = 0 end
+        if editor.playing then
+            editor.onion = false
+        else
+            editor.tick = 0
+        end
     end
 
     -- navigate and create frames
@@ -191,6 +194,7 @@ function love.keypressed(key)
     end
 end
 
+-- naive brush size switching
 function love.wheelmoved(x, y)
     if y > 0 then
         if editor.brushsize == "small" then

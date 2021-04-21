@@ -30,4 +30,4 @@ a simple flip book animation app
 
 **s:** saves all frames as .png's into the love2d save directory (in the "rosette" folder) as specified by: https://love2d.org/wiki/love.filesystem
 
-**escape:** quits the app
+**q:** quits the app
