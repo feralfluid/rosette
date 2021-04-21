@@ -181,7 +181,7 @@ function love.keypressed(key)
         end
     end
 
-    -- toggle onion skinnins
+    -- toggle onion skinning
     if key == "o" then
         editor.onion = not editor.onion
     end
