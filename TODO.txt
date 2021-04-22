@@ -1,0 +1,13 @@
+URGENT:
+
+- refactor with OO
+    - colors
+    - frames
+    - brush
+
+ETC:
+
+- GIF export
+- clean up history code
+- clean up translation code
+- peek prev/next
