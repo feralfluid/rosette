@@ -11,3 +11,5 @@ ETC:
 - clean up history code
 - clean up translation code
 - peek prev/next
+- brush sounds
+- fill tool
