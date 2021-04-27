@@ -1,5 +1,10 @@
+local gifcat = require("gifcat")
+
+local Brush = require("brush")
+local Frame = require("frame")
+
 function love.load()
-    -- editor configuration
+    -- editor configuration, from a serialized file eventually.
     settings = require("settings")
 
     -- apply editor config as needed
@@ -11,28 +16,23 @@ function love.load()
 
     -- animation file info, will be saved in project file someday
     anim = {
-        frames = {}, -- references to history[frame][historypos[frame]]
-        history = { { newframe() } },
-        historypos = { 1 },
+        title = "animation",
+        frames = { Frame:new() },
         fps = 10,
     }
-    anim.frames[1] = anim.history[1][anim.historypos[1]]
 
-    -- editor state, could also be saved in project file someday
+    -- editor state, could also be saved in project file someday, why not
     editor = {
-        tick = 0,
         frame = 1,
+        tick = 0,
         playing = false,
         drawing = false,
         onion = false,
-        tool = "brush",
-        brushcolor = 1,
-        brushsize = 4,
-        brushsizename = "medium"
+        brush = Brush:new(settings.colors),
     }
 
-    -- apply editor state as needed
-    love.graphics.setPointSize(editor.brushsize)
+    -- initialize gifcat
+    gifcat.init()
 end
 
 function love.update(dt)
@@ -48,19 +48,20 @@ function love.draw()
 
     if editor.drawing then
         -- draw to current frame canvas
-        love.graphics.setCanvas(anim.frames[editor.frame]) -- this should be a reference to a frame in the table at anim.history[editor.frame]
+        love.graphics.setCanvas(anim.frames[editor.frame]:current())
 
         -- set draw color and blend mode
-        if editor.tool == "brush" then
-            love.graphics.setColor(settings.colors[editor.brushcolor])
-        elseif editor.tool == "erase" then
+        if editor.brush:getTool() == "draw" then
+            love.graphics.setColor(editor.brush:getColor())
+        elseif editor.brush:getTool() == "erase" then
             love.graphics.setBlendMode("replace")
             love.graphics.setColor(0, 0, 0, 0)
         end
 
+        -- draw a circle at the cursor location
         -- i still need to figure out why this works lmao
         local mx, my = love.graphics.inverseTransformPoint(love.mouse.getX(), love.mouse.getY())
-        love.graphics.circle("fill", mx / settings.scale - (love.graphics.getWidth() / 2) + 128, my / settings.scale - (love.graphics.getHeight() / 2) + 128, editor.brushsize)
+        love.graphics.circle("fill", mx / settings.scale - (love.graphics.getWidth() / 2) + 128, my / settings.scale - (love.graphics.getHeight() / 2) + 128, editor.brush:getSize())
 
         -- reset state
         love.graphics.setBlendMode("alpha")
@@ -69,13 +70,10 @@ function love.draw()
 
     -- draw interface
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print("frame: "..editor.frame.."/"..#anim.frames.." / fps: "..anim.fps.." / onion: "..tostring(editor.onion), -250, -275)
-    if editor.playing then
-        love.graphics.print("PLAY", 210, -275)
-    else
-        love.graphics.print("PAWS", 210, -275)
-    end
-    love.graphics.print("tool: "..editor.tool.." / brush size: "..editor.brushsizename, -250, 258)
+    love.graphics.print("frame: "..editor.frame.."/"..#anim.frames.." / fps: "..anim.fps.." / onion: "..tostring(editor.onion), -250, -278)
+    love.graphics.print(editor.playing and "PLAY" or "PAWS", 210, -278)
+    love.graphics.print("tool: "..editor.brush:getTool().." / size:", -250, 262)
+    love.graphics.circle("fill", -72, 271, editor.brush:getSize() * settings.scale)
 
     -- draw canvas background
     love.graphics.setColor(1, 1, 1)
@@ -84,18 +82,22 @@ function love.draw()
     -- draw previous frame, if onion skinning is enabled
     if editor.onion and editor.frame > 1 then
         love.graphics.setColor(1, 1, 1, 0.4)
-        love.graphics.draw(anim.frames[editor.frame - 1], -128 * settings.scale, -128 * settings.scale, 0, 2, 2)
+        love.graphics.draw(anim.frames[editor.frame - 1]:current(), -128 * settings.scale, -128 * settings.scale, 0, settings.scale, settings.scale)
     end
 
     -- draw current frame
     love.graphics.setColor(1, 1, 1)
-    love.graphics.draw(anim.frames[editor.frame], -128 * settings.scale, -128 * settings.scale, 0, 2, 2)
+    love.graphics.draw(anim.frames[editor.frame]:current(), -128 * settings.scale, -128 * settings.scale, 0, settings.scale, settings.scale)
 
     -- draw next frame, if onion skinning is enabled
     if editor.onion and editor.frame < #anim.frames then
         love.graphics.setColor(1, 1, 1, 0.4)
-        love.graphics.draw(anim.frames[editor.frame + 1], -128 * settings.scale, -128 * settings.scale, 0, 2, 2)
+        love.graphics.draw(anim.frames[editor.frame + 1]:current(), -128 * settings.scale, -128 * settings.scale, 0, settings.scale, settings.scale)
     end
+end
+
+function love.quit()
+    gifcat.close()
 end
 
 function love.resize(w, h)
@@ -114,21 +116,15 @@ function love.keypressed(key, scancode, isrepeat)
 
     -- clear current frame
     if key == "return" then
-        table.insert(anim.history[editor.frame], newframe())
-        anim.historypos[editor.frame] = anim.historypos[editor.frame] + 1
-        anim.frames[editor.frame] = anim.history[editor.frame][anim.historypos[editor.frame]]
+        anim.frames[editor.frame]:insert()
     end
 
-    -- delete current frame; can't be undone!
+    -- delete current frame
     if key == "backspace" then
         if #anim.frames == 1 then
-            table.insert(anim.history[editor.frame], newframe())
-            anim.historypos[editor.frame] = anim.historypos[editor.frame] + 1
-            anim.frames[editor.frame] = anim.history[editor.frame][anim.historypos[editor.frame]]
+            anim.frames[editor.frame]:insert()
         else
             table.remove(anim.frames, editor.frame)
-            table.remove(anim.history, editor.frame)
-            table.remove(anim.historypos, editor.frame)
             if editor.frame == #anim.frames + 1 then
                 editor.frame = editor.frame - 1
             end
@@ -140,8 +136,7 @@ function love.keypressed(key, scancode, isrepeat)
         editor.playing = not editor.playing
         if editor.playing then
             editor.onion = false
-        else
-            editor.tick = 0
+            tick = 0
         end
     end
 
@@ -151,17 +146,13 @@ function love.keypressed(key, scancode, isrepeat)
             editor.frame = editor.frame + 1
         elseif not (love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) then
             editor.frame = editor.frame + 1
-            table.insert(anim.history, editor.frame, { newframe() })
-            table.insert(anim.historypos, editor.frame, 1)
-            table.insert(anim.frames, editor.frame, anim.history[editor.frame][1])
+            table.insert(anim.frames, editor.frame, Frame:new())
         end
     elseif key == "left" then
         if editor.frame > 1 then
             editor.frame = editor.frame - 1
         elseif not (love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) then
-            table.insert(anim.history, 1, { newframe() })
-            table.insert(anim.historypos, 1, 1)
-            table.insert(anim.frames, 1, anim.history[editor.frame][1])
+            table.insert(anim.frames, 1, Frame:new())
         end
     end
 
@@ -175,40 +166,20 @@ function love.keypressed(key, scancode, isrepeat)
     -- insert frame
     if key == "i" then
         editor.frame = editor.frame + 1
-        table.insert(anim.history, editor.frame, { newframe() })
-        table.insert(anim.historypos, editor.frame, 1)
-        table.insert(anim.frames, editor.frame, anim.history[editor.frame][1])
+        table.insert(anim.frames, editor.frame, Frame:new())
     end
 
     -- duplicate current frame
     if key == "d" then
-        -- duplicate frame data
-        local history = {}
-        for i, k in ipairs(anim.history[editor.frame]) do
-            history[i] = k
-        end
-        local historypos = anim.historypos[editor.frame]
-
-        -- add new frame data
         editor.frame = editor.frame + 1
-        table.insert(anim.history, editor.frame, history)
-        table.insert(anim.historypos, editor.frame, historypos)
-        table.insert(anim.frames, editor.frame, anim.history[editor.frame][historypos])
+        table.insert(anim.frames, editor.frame, Frame:from(anim.frames[editor.frame - 1]))
     end
 
     -- undo and redo
-    if key == "z" and not (love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) and anim.historypos[editor.frame] > 1 then
-        anim.historypos[editor.frame] = anim.historypos[editor.frame] - 1
-        anim.frames[editor.frame] = anim.history[editor.frame][anim.historypos[editor.frame]]
-
-        -- debug
-        -- print("frame "..editor.frame.." history position: "..anim.historypos[editor.frame].."/"..#anim.history[editor.frame])
-    elseif key == "z" and (love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) and anim.historypos[editor.frame] < #anim.history[editor.frame] then
-        anim.historypos[editor.frame] = anim.historypos[editor.frame] + 1
-        anim.frames[editor.frame] = anim.history[editor.frame][anim.historypos[editor.frame]]
-
-        -- debug
-        -- print("frame "..editor.frame.." history position: "..anim.historypos[editor.frame].."/"..#anim.history[editor.frame])
+    if key == "z" and not (love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) then
+        anim.frames[editor.frame]:undo()
+    elseif key == "z" and (love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) then
+        anim.frames[editor.frame]:redo()
     end
 
     -- adjust frame rate
@@ -220,19 +191,19 @@ function love.keypressed(key, scancode, isrepeat)
 
     -- enable eraser tool
     if key == "e" then
-        editor.tool = "erase"
+        editor.brush:setTool("erase")
     end
 
     -- enable draw tool
     if key == "b" then
-        editor.tool = "brush"
+        editor.brush:setTool("draw")
     end
 
-    -- cycle colors
+    -- cycle colors, BROKEN
     if key == "c" then
-        editor.tool = "brush"
-        editor.brushcolor = 1 + editor.brushcolor % #settings.colors
-        love.graphics.setBackgroundColor(settings.colors[editor.brushcolor])
+        editor.brush:setTool("draw")
+        editor.brush:cycleColor()
+        love.graphics.setBackgroundColor(editor.brush:getColor())
     end
 
     -- toggle onion skinning
@@ -242,76 +213,37 @@ function love.keypressed(key, scancode, isrepeat)
 
     -- export all frames
     if key == "s" and not isrepeat then
-        for i, frame in ipairs(anim.frames) do
-            frame:newImageData():encode("png", string.format("%s%i.png", leadingzero(#anim.frames, i), i))
+        local gif = gifcat.newGif(anim.title..".gif", 512, 512, anim.fps)
+        for _, f in ipairs(anim.frames) do
+            local c = love.graphics.newCanvas(512, 512)
+            c:renderTo(function()
+                love.graphics.origin()
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.rectangle("fill", 0, 0, 512, 512)
+                love.graphics.draw(f:current(), 0, 0, 0, 2)
+            end)
+            gif:frame(c)
         end
+        gif:close()
     end
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
-    -- should probably make sure mouse is on the canvas?
-    if button == 2 then
-        editor.lasttool = editor.tool -- save last tool for release
-        editor.tool = "erase"
-    end
-
     editor.drawing = true
-
-    -- delete all history past the current history position
-    for i = anim.historypos[editor.frame] + 1,#anim.history[editor.frame] do
-        table.remove(anim.history[editor.frame], anim.historypos[editor.frame] + 1)
-    end
-    -- concat current frame to this frame's history
-    table.insert(anim.history[editor.frame], newframe(anim.frames[editor.frame]))
-    -- change history position
-    anim.historypos[editor.frame] = anim.historypos[editor.frame] + 1
-    -- switch to new frame
-    anim.frames[editor.frame] = anim.history[editor.frame][anim.historypos[editor.frame]]
-
-    -- debug
-    -- print("frame "..editor.frame.." history position: "..anim.historypos[editor.frame].."/"..#anim.history[editor.frame])
+    anim.frames[editor.frame]:step()
 end
 
 function love.mousereleased(x, y, button, istouch, presses)
-    -- this should only activate if mouse is released on the canvas, but it's ok for now
-    if button == 2 then
-        editor.tool = editor.lasttool
-    end
-
     editor.drawing = false
 end
 
--- naive brush size switching
 function love.wheelmoved(x, y)
+    -- brush size
     if y > 0 then
-        if editor.brushsizename == "small" then
-            editor.brushsizename = "medium"
-            editor.brushsize = 4
-        elseif editor.brushsizename == "medium" then
-            editor.brushsizename = "large"
-            editor.brushsize = 7
-        end
+        editor.brush:increaseSize()
     elseif y < 0 then
-        if editor.brushsizename == "large" then
-            editor.brushsizename = "medium"
-            editor.brushsize = 4
-        elseif editor.brushsizename == "medium" then
-            editor.brushsizename = "small"
-            editor.brushsize = 2
-        end
+        editor.brush:decreaseSize()
     end
-end
-
-function newframe(f)
-    local canvas = love.graphics.newCanvas(256, 256)
-    if f then
-        canvas:renderTo(function()
-            love.graphics.origin()
-            love.graphics.setColor(1, 1, 1)
-            love.graphics.draw(f)
-        end)
-    end
-    return canvas
 end
 
 -- adds a number of leading zeroes based on the length of the largest frame index and the current index
