@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="MjH-Hh-uSt">
+    <device id="ipad12_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--frame 1 of 1-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="rosette" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DA3-EI-bGM" customClass="PKCanvasView">
+                                <rect key="frame" x="283" y="112" width="800" height="800"/>
+                                <subviews>
+                                    <view hidden="YES" opaque="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" alpha="0.20000000000000001" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3SX-OD-ZN9" customClass="PKCanvasView">
+                                        <rect key="frame" x="0.0" y="0.0" width="800" height="800"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" notEnabled="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="800" id="Qzb-q3-cid"/>
+                                            <constraint firstAttribute="width" constant="800" id="ptC-WV-Vlx"/>
+                                        </constraints>
+                                    </view>
+                                    <view hidden="YES" opaque="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" alpha="0.20000000000000001" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OJQ-bv-MLK" customClass="PKCanvasView">
+                                        <rect key="frame" x="0.0" y="0.0" width="800" height="800"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" notEnabled="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="800" id="16E-Am-nCa"/>
+                                            <constraint firstAttribute="width" constant="800" id="oVZ-ip-Ufk"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="3SX-OD-ZN9" firstAttribute="centerY" secondItem="DA3-EI-bGM" secondAttribute="centerY" id="MnI-Km-3vk"/>
+                                    <constraint firstAttribute="width" constant="800" id="Mpn-y9-uFT"/>
+                                    <constraint firstItem="OJQ-bv-MLK" firstAttribute="centerY" secondItem="DA3-EI-bGM" secondAttribute="centerY" id="Nbr-yQ-4Xc"/>
+                                    <constraint firstAttribute="width" secondItem="DA3-EI-bGM" secondAttribute="height" multiplier="1:1" id="Ttb-cS-I0z"/>
+                                    <constraint firstItem="3SX-OD-ZN9" firstAttribute="centerX" secondItem="DA3-EI-bGM" secondAttribute="centerX" id="b6N-bw-60W"/>
+                                    <constraint firstAttribute="height" constant="800" id="dec-uW-qQh"/>
+                                    <constraint firstItem="OJQ-bv-MLK" firstAttribute="centerX" secondItem="DA3-EI-bGM" secondAttribute="centerX" id="j1c-Pf-gPI"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="DA3-EI-bGM" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="9DT-zm-c5e"/>
+                            <constraint firstItem="DA3-EI-bGM" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="MMG-kX-88o"/>
+                        </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="Vpi-Go-4ZI" appends="YES" id="LUb-Aj-wcZ"/>
+                            <outletCollection property="gestureRecognizers" destination="pGJ-fB-VMF" appends="YES" id="aSI-Yr-ngu"/>
+                            <outletCollection property="gestureRecognizers" destination="c4x-ck-UvO" appends="YES" id="c8Z-dD-eVw"/>
+                        </connections>
+                    </view>
+                    <navigationItem key="navigationItem" title="frame 1 of 1" id="9sy-oF-u4v">
+                        <leftBarButtonItems>
+                            <barButtonItem enabled="NO" title="Item" image="arrow.left.to.line" catalog="system" id="YP3-mx-zMX">
+                                <connections>
+                                    <action selector="firstFrame:" destination="BYZ-38-t0r" id="SY8-Ni-fgX"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem enabled="NO" title="Item" image="arrow.backward" catalog="system" id="ltm-kh-0IJ">
+                                <connections>
+                                    <action selector="prevFrame:" destination="BYZ-38-t0r" id="tLc-ZP-F0Q"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem enabled="NO" title="Item" image="arrow.forward" catalog="system" id="S0I-DT-EMo">
+                                <connections>
+                                    <action selector="nextFrame:" destination="BYZ-38-t0r" id="vMG-ga-qHy"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem enabled="NO" title="Item" image="arrow.right.to.line" catalog="system" id="XNV-Be-6cC">
+                                <connections>
+                                    <action selector="lastFrame:" destination="BYZ-38-t0r" id="g5W-y4-SdV"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" image="plus.app" catalog="system" id="BGU-LA-oOR">
+                                <connections>
+                                    <action selector="insertFrame:" destination="BYZ-38-t0r" id="b5g-kU-xHk"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" image="plus.square.on.square" catalog="system" id="0CX-o5-15J">
+                                <connections>
+                                    <action selector="duplcateFrame:" destination="BYZ-38-t0r" id="yOZ-dI-288"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" image="clear" catalog="system" id="6NV-HS-c9w">
+                                <connections>
+                                    <action selector="clearFrame:" destination="BYZ-38-t0r" id="j1J-JG-F27"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem enabled="NO" title="Item" image="trash" catalog="system" id="Q5X-RA-g8V">
+                                <connections>
+                                    <action selector="deleteFrame:" destination="BYZ-38-t0r" id="EJm-ja-CeG"/>
+                                </connections>
+                            </barButtonItem>
+                        </leftBarButtonItems>
+                        <rightBarButtonItems>
+                            <barButtonItem enabled="NO" title="Item" image="play.circle" catalog="system" id="DCy-at-jyV">
+                                <connections>
+                                    <action selector="playPaws:" destination="BYZ-38-t0r" id="Xzb-uH-gOd"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem enabled="NO" title="Item" image="circlebadge.2" catalog="system" id="GOJ-aA-Ozy">
+                                <connections>
+                                    <action selector="toggleOnion:" destination="BYZ-38-t0r" id="47K-tA-Utf"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" image="pencil.slash" catalog="system" id="Wf0-mA-Obg">
+                                <color key="tintColor" systemColor="systemRedColor"/>
+                                <connections>
+                                    <action selector="toggleFingerDrawing:" destination="BYZ-38-t0r" id="RQW-Lb-IX8"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="canvasView" destination="DA3-EI-bGM" id="Qlx-Hs-SJj"/>
+                        <outlet property="clearFrameButton" destination="6NV-HS-c9w" id="ZCL-z3-kfe"/>
+                        <outlet property="deleteFrameButton" destination="Q5X-RA-g8V" id="otH-SE-EKq"/>
+                        <outlet property="duplicateFrameButton" destination="0CX-o5-15J" id="u0d-ZK-XlH"/>
+                        <outlet property="firstFrameButton" destination="YP3-mx-zMX" id="86d-rM-3WB"/>
+                        <outlet property="insertFrameButton" destination="BGU-LA-oOR" id="8xW-FZ-gu9"/>
+                        <outlet property="lastFrameButton" destination="XNV-Be-6cC" id="fd3-wC-S0b"/>
+                        <outlet property="navBar" destination="9sy-oF-u4v" id="Wfk-ZM-Gxb"/>
+                        <outlet property="nextFrameButton" destination="S0I-DT-EMo" id="fPU-1A-iwE"/>
+                        <outlet property="onionNextView" destination="OJQ-bv-MLK" id="hFn-tv-jyk"/>
+                        <outlet property="onionPrevView" destination="3SX-OD-ZN9" id="GxS-SO-d30"/>
+                        <outlet property="playPawsButton" destination="DCy-at-jyV" id="ZeD-Ef-Y17"/>
+                        <outlet property="prevFrameButton" destination="ltm-kh-0IJ" id="1fe-pe-dSy"/>
+                        <outlet property="toggleFingerDrawingButton" destination="Wf0-mA-Obg" id="iFy-Zg-sqt"/>
+                        <outlet property="toggleOnionButton" destination="GOJ-aA-Ozy" id="yFi-uD-7MO"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="right" id="Vpi-Go-4ZI" userLabel="Right Swipe Recognizer">
+                    <connections>
+                        <action selector="swipedRight:" destination="BYZ-38-t0r" id="6pR-B9-0gf"/>
+                    </connections>
+                </swipeGestureRecognizer>
+                <swipeGestureRecognizer direction="left" id="pGJ-fB-VMF" userLabel="Left Swipe Recognizer">
+                    <connections>
+                        <action selector="swipedLeft:" destination="BYZ-38-t0r" id="ZRr-ma-BpV"/>
+                    </connections>
+                </swipeGestureRecognizer>
+                <tapGestureRecognizer numberOfTapsRequired="2" id="c4x-ck-UvO">
+                    <connections>
+                        <action selector="doubleTapped:" destination="BYZ-38-t0r" id="aSo-oe-rrt"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="832.79648609077594" y="114.84374999999999"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="SGL-gL-kx0">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="MjH-Hh-uSt" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Lv0-j2-Tjx">
+                        <rect key="frame" x="0.0" y="24" width="1366" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="gco-Ml-dcE"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xwt-AB-gGE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="138.79941434846265" y="114.84374999999999"/>
+        </scene>
+    </scenes>
+    <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+    <resources>
+        <image name="arrow.backward" catalog="system" width="128" height="98"/>
+        <image name="arrow.forward" catalog="system" width="128" height="98"/>
+        <image name="arrow.left.to.line" catalog="system" width="128" height="89"/>
+        <image name="arrow.right.to.line" catalog="system" width="128" height="89"/>
+        <image name="circlebadge.2" catalog="system" width="128" height="93"/>
+        <image name="clear" catalog="system" width="128" height="114"/>
+        <image name="pencil.slash" catalog="system" width="128" height="113"/>
+        <image name="play.circle" catalog="system" width="128" height="121"/>
+        <image name="plus.app" catalog="system" width="128" height="114"/>
+        <image name="plus.square.on.square" catalog="system" width="128" height="113"/>
+        <image name="trash" catalog="system" width="121" height="128"/>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>
