@@ -12,7 +12,7 @@ a simple flipbook animation app for iPad
 - if you swipe past the last frame, it will create a new frame for you :)
 - inserting/deleting frames
 - duplicating/clearing frames
-- **onion skinning!** this allows the user to see a low-transparency version of the
+- **onion skinning!** this allows the user to see a low-opacity version of the
   previous frame and the next frame so that they can animate between two frames
   effectively.
 - play/pause the animation preview
