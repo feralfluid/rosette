@@ -1,0 +1,5 @@
+# editor configs
+/.vscode/
+
+# macOS filesystem config file
+.DS_Store
