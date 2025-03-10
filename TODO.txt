@@ -1,6 +1,0 @@
-- clean up translation code
-- peek prev/next
-- you can't hold right click to erase anymore, not that it was documented lol
-- make sure mouse is on the canvas when pressed
-- brush sounds
-- fill tool
