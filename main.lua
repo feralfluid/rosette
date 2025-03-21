@@ -1,5 +1,3 @@
-local gifcat = require("gifcat")
-
 local Brush = require("brush")
 local Frame = require("frame")
 
@@ -30,9 +28,6 @@ function love.load()
         onion = false,
         brush = Brush:new(settings.colors),
     }
-
-    -- initialize gifcat
-    gifcat.init()
 end
 
 function love.update(dt)
@@ -94,10 +89,6 @@ function love.draw()
         love.graphics.setColor(1, 1, 1, 0.4)
         love.graphics.draw(anim.frames[editor.frame + 1]:current(), -128 * settings.scale, -128 * settings.scale, 0, settings.scale, settings.scale)
     end
-end
-
-function love.quit()
-    gifcat.close()
 end
 
 function love.resize(w, h)
@@ -213,7 +204,6 @@ function love.keypressed(key, scancode, isrepeat)
 
     -- export all frames
     if key == "s" and not isrepeat then
-        local gif = gifcat.newGif(anim.title..".gif", 512, 512, anim.fps)
         for _, f in ipairs(anim.frames) do
             local c = love.graphics.newCanvas(512, 512)
             c:renderTo(function()
@@ -222,9 +212,7 @@ function love.keypressed(key, scancode, isrepeat)
                 love.graphics.rectangle("fill", 0, 0, 512, 512)
                 love.graphics.draw(f:current(), 0, 0, 0, 2)
             end)
-            gif:frame(c)
         end
-        gif:close()
     end
 end
 
