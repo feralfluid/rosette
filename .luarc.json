@@ -1,0 +1,5 @@
+{
+  "Lua.workspace.library": [
+    "${3rd}/love2d/library"
+  ]
+}
